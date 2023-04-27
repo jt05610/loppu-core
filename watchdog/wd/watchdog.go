@@ -24,7 +24,7 @@ type Reaction struct {
 }
 
 type WD struct {
-	MetaData     *MetaData `yaml:"meta"`
+	MetaData     *MetaData `yaml:"metadata"`
 	Watch        string    `yaml:"watch"`
 	React        *Reaction `yaml:"react"`
 	Limit        float32   `yaml:"limit"`

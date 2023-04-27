@@ -79,7 +79,7 @@ type MetaData struct {
 }
 
 type Node struct {
-	MetaData  *MetaData `yaml:"meta"`
+	MetaData  *MetaData `yaml:"metadata"`
 	RedisAddr string    `yaml:"redis"`
 	Password  string    `yaml:"password,omitempty"`
 	DB        int       `yaml:"db,omitempty"`
