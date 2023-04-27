@@ -1,1 +1,2 @@
-module loppu-core
+module github.com/jt05610/loppu/core
+
