@@ -6,7 +6,6 @@ import (
 	"errors"
 	"github.com/jt05610/loppu"
 	"github.com/jt05610/loppu/yaml"
-	"github.com/redis/go-redis/v9"
 	"io"
 	"log"
 	"net/http"
@@ -68,14 +67,6 @@ func (s *Stream) Stream(ctx context.Context, out chan *redis.XAddArgs) error {
 			out <- args
 		}
 	}
-}
-
-type MetaData struct {
-	Node   string `yaml:"node"`
-	Author string `yaml:"author"`
-	Date   string `yaml:"date"`
-	Host   string `yaml:"host"`
-	Port   int    `yaml:"port"`
 }
 
 type Node struct {
