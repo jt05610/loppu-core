@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/csv"
-	"injector/softNode/stream/redis"
 	"os"
 	"strconv"
 )

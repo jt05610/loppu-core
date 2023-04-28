@@ -1,7 +1,7 @@
 package mb_test
 
 import (
-	mb "github.com/jt05610/loppu/hardware/modbus"
+	"github.com/jt05610/loppu-core/modbus/mb"
 	"github.com/jt05610/loppu/yaml"
 	"testing"
 )
@@ -9,7 +9,7 @@ import (
 func TestLoadFlushMBusNode(t *testing.T) {
 	testNode := mb.NewMBusNode("fakeNode", 0xFE)
 	fName := "fake_node.yaml"
-	err := yaml.FlushFile[mb.MBusNode](fName, true, true, testNode.(*mb.MBusNode))
+	err := yaml.FlushFile[mb.MBusNode](fName, true, true, testNode)
 	if err != nil {
 		t.Error(err)
 	}

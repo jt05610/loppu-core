@@ -1,8 +1,13 @@
-meta:
+metadata:
     node: fakeNode
-    author: Jonathan Taylor
-    address: 254
-    date: 2023-04-26 13:17:09.219611 -0600 MDT m=+0.002598751
+    desc: ""
+    author: Taylor, Jonathan
+    version: ""
+    date: 2023-04-28T12:30:32.9630343-06:00
+    updated: 2023-04-28T12:30:32.9630343-06:00
+    addr:
+        - 254
+    port: 50001
 tables:
     coils:
         - name: coil_1

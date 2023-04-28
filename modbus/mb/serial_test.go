@@ -1,7 +1,7 @@
 package mb_test
 
 import (
-	pdu "github.com/jt05610/loppu/hardware/modbus"
+	pdu "github.com/jt05610/loppu-core/modbus/mb"
 	"testing"
 )
 
@@ -31,10 +31,10 @@ func TestNewSerialPDU(t *testing.T) {
 		panic(err)
 	}
 
-	if sPDU.Addr() != actualPDU.Addr() {
+	if sPDU.Address.String() != actualPDU.Address.String() {
 		t.Fail()
 	}
-	if sPDU.CRC16() != actualPDU.CRC16() {
+	if sPDU.CRC != actualPDU.CRC {
 		t.Fail()
 	}
 }

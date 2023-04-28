@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"injector/softNode/stream/redis"
+	"github.com/jt05610/loppu/core/stream/redis"
 	"sync"
 	"testing"
 )

@@ -3,8 +3,8 @@ package wd
 import (
 	"context"
 	"github.com/jt05610/loppu"
-	"github.com/jt05610/loppu/core/stream/redis"
 	"github.com/jt05610/loppu/yaml"
+	"github.com/redis/go-redis/v9"
 	"io"
 	"net/http"
 	"time"
