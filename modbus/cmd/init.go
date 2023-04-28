@@ -13,27 +13,23 @@ import (
 )
 
 // initCmd represents the init command
-var (
-	name    string
-	addr    string
-	initCmd = &cobra.Command{
-		Use:   "init",
-		Short: "initialize the modbus node",
-		Long:  `generates a config file for your node`,
-		Run: func(cmd *cobra.Command, args []string) {
-			n := mb.NewMBus().(*mb.MBusServer)
-			f := filepath.Join("nodes", "modbus.yaml")
-			df, err := os.Create(f)
-			if err != nil {
-				panic(err)
-			}
-			err = n.Flush(df)
-			if err != nil {
-				panic(err)
-			}
-		},
-	}
-)
+var initCmd = &cobra.Command{
+	Use:   "init",
+	Short: "initialize the modbus node",
+	Long:  `generates a config file for your node`,
+	Run: func(cmd *cobra.Command, args []string) {
+		n := mb.NewMBus().(*mb.MBusServer)
+		f := filepath.Join("nodes", "modbus.yaml")
+		df, err := os.Create(f)
+		if err != nil {
+			panic(err)
+		}
+		err = n.Flush(df)
+		if err != nil {
+			panic(err)
+		}
+	},
+}
 
 func init() {
 	rootCmd.AddCommand(initCmd)
