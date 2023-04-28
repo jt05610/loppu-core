@@ -1,4 +1,4 @@
-package modbus
+package mb
 
 import (
 	"encoding/binary"
@@ -7,12 +7,11 @@ import (
 	"fmt"
 	"github.com/iancoleman/strcase"
 	"github.com/jt05610/loppu"
-	"github.com/jt05610/loppu/metadata"
+	"github.com/jt05610/loppu/comm"
 	"github.com/jt05610/loppu/yaml"
 	"io"
 	"net/http"
 	"net/url"
-	"syscall"
 	"time"
 )
 
@@ -45,45 +44,24 @@ type Handler struct {
 }
 
 type MBusNode struct {
-	MetaData    *metadata.MetaData    `yaml:"metadata"`
+	MetaData    *loppu.MetaData       `yaml:"metadata"`
 	Tables      map[string][]*Handler `yaml:"tables"`
 	Diag        []*Handler            `yaml:"diag,omitempty"`
 	client      *Client
+	srv         comm.Server
 	rfLookup    map[string]map[string]func(uint16, uint16) *MBusPDU
 	addrLookup  map[string]uint16
 	paramLookup map[string]string
 }
 
-func (n *MBusNode) Meta() *metadata.MetaData {
+func (n *MBusNode) Meta() *loppu.MetaData {
 	return n.MetaData
 }
 
 func (n *MBusNode) Run() error {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (n *MBusNode) Start() error {
 	mux := http.NewServeMux()
 	n.Register(mux)
-	srv := &http.Server{
-		Addr:              fmt.Sprintf("%s:%v", n.Addr(), n.Port()),
-		Handler:           mux,
-		IdleTimeout:       5 * time.Minute,
-		ReadHeaderTimeout: time.Second,
-	}
-	return srv.ListenAndServe()
-}
-
-func (n *MBusNode) Stop() error {
-	return syscall.Exec("kill", []string{"modbus.pid"}, nil)
-}
-
-func (n *MBusNode) Proto(p ...hardware.Proto) hardware.Proto {
-	if p != nil {
-		n.client = p[0].(*Client)
-	}
-	return n.client
+	return nil
 }
 
 var lookup = map[string]map[string]func(uint16, uint16) *MBusPDU{
@@ -99,8 +77,8 @@ var lookup = map[string]map[string]func(uint16, uint16) *MBusPDU{
 	},
 }
 
-func (n *MBusNode) Endpoints(baseURL string) []*loppu.Endpoint {
-	res := make([]*loppu.Endpoint, 0)
+func (n *MBusNode) Endpoints(baseURL string) []*Endpoint {
+	res := make([]*Endpoint, 0)
 	n.paramLookup = make(map[string]string)
 	for name, handlers := range n.Tables {
 		for _, h := range handlers {
@@ -108,7 +86,7 @@ func (n *MBusNode) Endpoints(baseURL string) []*loppu.Endpoint {
 			if err != nil {
 				panic(err)
 			}
-			res = append(res, &loppu.Endpoint{
+			res = append(res, &Endpoint{
 				Route:       route,
 				Method:      http.MethodGet,
 				Description: h.Description,
@@ -116,9 +94,9 @@ func (n *MBusNode) Endpoints(baseURL string) []*loppu.Endpoint {
 				Func:        strcase.ToCamel(fmt.Sprintf("Get %s", h.Name)),
 			})
 			if name == "coils" || name == "holding_registers" {
-				var param *loppu.EndpointParam
+				var param *EndpointParam
 				if len(h.Params) > 0 {
-					param = &loppu.EndpointParam{}
+					param = &EndpointParam{}
 					for paramName, p := range h.Params[0] {
 						param.Name = strcase.ToLowerCamel(paramName)
 						param.Type = string(p.Type)
@@ -130,7 +108,7 @@ func (n *MBusNode) Endpoints(baseURL string) []*loppu.Endpoint {
 				} else {
 					param = nil
 				}
-				res = append(res, &loppu.Endpoint{
+				res = append(res, &Endpoint{
 					Route:       route,
 					Method:      http.MethodPost,
 					Description: h.Description,
@@ -173,10 +151,7 @@ func (n *MBusNode) handlers() map[string]http.HandlerFunc {
 					} else {
 						var bytes []byte
 						if r.Method == http.MethodGet {
-							pack, err := n.client.Request(r.Context(),
-								n.MetaData.Address, reqFunc(n.addrLookup[r.
-									RequestURI], 1))
-							pdu := pack.(*MBusPDU)
+							pdu, err := n.client.Request(r.Context(), n.MetaData.Addr.Byte(), reqFunc(n.addrLookup[r.RequestURI], 1))
 							if err != nil || res == nil {
 								http.Error(w, err.Error(), http.StatusInternalServerError)
 								return
@@ -238,13 +213,12 @@ func (n *MBusNode) handlers() map[string]http.HandlerFunc {
 								reqPDU = reqFunc(n.addrLookup[r.RequestURI], 1)
 							}
 
-							pack, err := n.client.Request(r.Context(),
-								n.MetaData.Address, reqPDU)
+							pdu, err := n.client.Request(r.Context(),
+								n.MetaData.Addr.Byte(), reqPDU)
 							if err != nil {
 								http.Error(w, "server error", http.StatusInternalServerError)
 								return
 							}
-							pdu := pack.(*MBusPDU)
 							if pdu.FuncCode != reqPDU.FuncCode {
 								http.Error(w, "Modbus server error", http.StatusInternalServerError)
 							} else {
@@ -279,13 +253,11 @@ func (n *MBusNode) Register(srv *http.ServeMux) {
 					http.Error(w, "bad request", http.StatusBadRequest)
 				}
 				req := Echo(body["message"]...)
-				pack, err := n.client.Request(r.Context(),
-					n.MetaData.Address, req)
+				res, err := n.client.Request(r.Context(), n.MetaData.Addr.Byte(), req)
 				if err != nil {
 					http.Error(w, err.Error(), http.StatusInternalServerError)
 					return
 				}
-				res := pack.(*MBusPDU)
 				var bytes []byte
 				if res.FuncCode != req.FuncCode {
 					http.Error(w, "Modbus server error", http.StatusInternalServerError)
@@ -315,15 +287,80 @@ func (n *MBusNode) Flush(w io.Writer) error {
 	return l.Flush(w, n)
 }
 
-func NewMBusNode(name string, address byte) loppu.Node {
+type MBusServer struct {
+	MetaData *loppu.MetaData      `yaml:"meta"`
+	Servers  map[string]*MBusNode `yaml:"servers"`
+	srv      *http.Server
+}
+
+func (m *MBusServer) Meta() *loppu.MetaData {
+	return m.MetaData
+}
+
+func (m *MBusServer) Run() error {
+	mux := http.NewServeMux()
+	for _, s := range m.Servers {
+		s.Register(mux)
+	}
+	fmt.Println("starting server")
+	m.srv = &http.Server{
+		Addr:              fmt.Sprintf(":%v", m.MetaData.Port),
+		Handler:           mux,
+		IdleTimeout:       5 * time.Minute,
+		ReadHeaderTimeout: time.Second,
+	}
+	return m.srv.ListenAndServe()
+}
+
+func (m *MBusServer) Load(r io.Reader) error {
+	l := yaml.NodeService[MBusServer]{}
+	v, err := l.Load(r)
+	m.MetaData = v.MetaData
+	m.Servers = v.Servers
+	return err
+}
+
+func (m *MBusServer) Flush(w io.Writer) error {
+	l := yaml.NodeService[MBusServer]{}
+	return l.Flush(w, m)
+}
+
+func NewMBus() loppu.Node {
+	return &MBusServer{
+		MetaData: &loppu.MetaData{
+			Node:    "modbus",
+			Desc:    "server for interacting with devices on a modbus wire",
+			Author:  "Jonathan Taylor",
+			Version: "0.1.0",
+			Date:    time.Now(),
+			Updated: time.Now(),
+			Addr:    comm.NewAddr("127.0.0.1"),
+			Port:    55555,
+		},
+	}
+}
+
+func (m *MBusServer) Add(node *MBusNode) error {
+	if m.Servers == nil {
+		m.Servers = make(map[string]*MBusNode, 0)
+	}
+	_, found := m.Servers[node.MetaData.Node]
+	if found {
+		return errors.New("cannot create server with name, please choose another name")
+	}
+	m.Servers[node.MetaData.Node] = node
+	return nil
+}
+
+func NewMBusNode(name string, address byte) *MBusNode {
 	return &MBusNode{
-		MetaData: &MetaData{
+		MetaData: &loppu.MetaData{
 			Node:    name,
-			Author:  metadata.Username(),
-			Address: MBAddress(address),
-			Date:    time.Now().String(),
-			Host:    "127.0.0.1",
-			Port:    50000,
+			Author:  loppu.Username(),
+			Addr:    NewMBAddress(address),
+			Date:    time.Now(),
+			Updated: time.Now(),
+			Port:    50001,
 		},
 		Tables: map[string][]*Handler{
 			"discrete_inputs": {

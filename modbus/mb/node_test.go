@@ -1,4 +1,4 @@
-package modbus_test
+package mb_test
 
 import (
 	mb "github.com/jt05610/loppu/hardware/modbus"

@@ -1,4 +1,4 @@
-package modbus
+package mb
 
 func CRC16(msg []byte) uint16 {
 	var crcHi, crcLo, index uint8

@@ -1,10 +1,8 @@
-package modbus
+package mb
 
 import (
 	"context"
-	"github.com/jt05610/loppu"
-	"github.com/jt05610/loppu/comm/serial"
-	"github.com/jt05610/loppu/hardware"
+	"errors"
 	"go.uber.org/zap"
 	"sync"
 )
@@ -21,8 +19,8 @@ func (c *Client) Open() error {
 	return c.dl.serial.Open()
 }
 
-func (c *Client) Request(ctx context.Context, addr loppu.Addr, data hardware.Packet) (hardware.Packet, error) {
-	s := NewSerialPDU(addr.Byte(), data)
+func (c *Client) Request(ctx context.Context, addr byte, data *MBusPDU) (*MBusPDU, error) {
+	s := NewSerialPDU(addr, data)
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	_, err := c.dl.Send(s)
@@ -41,7 +39,7 @@ func (c *Client) Request(ctx context.Context, addr loppu.Addr, data hardware.Pac
 	case res := <-c.resCh:
 		return res.PDU, nil
 	case <-ctx.Done():
-		return nil, hardware.ErrTimeout
+		return nil, errors.New("timeout")
 	}
 }
 
@@ -49,8 +47,9 @@ func (c *Client) Close() {
 	close(c.resCh)
 	c.dl.serial.Close()
 }
-func DefaultClient(logger *zap.Logger) hardware.Proto {
-	ser, err := serial.NewSerial(serial.DefaultSerial, logger)
+
+func DefaultClient(logger *zap.Logger) *Client {
+	ser, err := NewSerial(DefaultSerial, logger)
 	if err != nil {
 		panic(err)
 	}

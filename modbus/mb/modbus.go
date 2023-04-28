@@ -1,8 +1,7 @@
-package modbus
+package mb
 
 import (
 	"encoding/binary"
-	"github.com/jt05610/loppu"
 )
 
 type FuncCode byte
@@ -20,14 +19,6 @@ const (
 type MBusPDU struct {
 	FuncCode
 	Body []byte
-}
-
-func (m *MBusPDU) CRC16() uint16 {
-	return 0
-}
-
-func (m *MBusPDU) Addr() loppu.Addr {
-	return nil
 }
 
 func (m *MBusPDU) Header() []byte {
