@@ -1,0 +1,18 @@
+meta:
+    node: streamer
+    desc: node that manages redis streaming data
+    author: Jonathan Taylor
+    version: 0.1.0
+    date: 2023-04-28T13:00:33.0607287-06:00
+    updated: 2023-04-28T13:00:33.0607287-06:00
+    addr: 127.0.0.1
+    port: 56665
+streams:
+    - name: fakeStream
+      sampleID: ""
+      requests:
+        - name: req1
+          uri: http://localhost:55555/
+        - name: req2
+          uri: http://localhost:55555/
+      interval: 100ms
