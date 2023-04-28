@@ -2,72 +2,17 @@ package redis
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"github.com/jt05610/loppu"
 	"github.com/jt05610/loppu/yaml"
-	"github.com/redis/go-redis/v9"
 	"io"
-	"log"
 	"net/http"
-	"sync"
 	"syscall"
 	"time"
 )
 
-type Request struct {
-	Name string `yaml:"name"`
-	Uri  string `yaml:"uri"`
-}
-
-type Stream struct {
-	Name     string `yaml:"name"`
-	ID       string
-	Requests []*Request    `yaml:"requests"`
-	Interval time.Duration `yaml:"interval"`
-}
-
-func (s *Stream) doRequests(ctx context.Context) (*redis.XAddArgs, error) {
-	data := map[string]interface{}{
-		"id": s.ID,
-	}
-	for _, r := range s.Requests {
-		select {
-		case <-ctx.Done():
-			return nil, errors.New("timeout")
-		default:
-			resp, err := http.Get(r.Uri)
-			if err != nil {
-				return nil, err
-			}
-			var res map[string]interface{}
-			d := json.NewDecoder(resp.Body)
-			err = d.Decode(&res)
-			if err != nil {
-				panic(err)
-			}
-			data[r.Name] = res["result"]
-		}
-	}
-	return &redis.XAddArgs{
-		Stream: s.Name,
-		Values: data,
-	}, nil
-}
-
 func (s *Stream) Stream(ctx context.Context, out chan *redis.XAddArgs) error {
-	for {
-		select {
-		case <-ctx.Done():
-			return nil
-		case <-time.After(s.Interval):
-			args, err := s.doRequests(ctx)
-			if err != nil {
-				return err
-			}
-			out <- args
-		}
-	}
+
 }
 
 type MetaData struct {
@@ -152,37 +97,7 @@ func (s *Node) Close() {
 }
 
 func (s *Node) Stream(ctx context.Context) {
-	var wg sync.WaitGroup
-	ch := make(chan *redis.XAddArgs)
-	defer close(ch)
-	err := s.Open(ctx)
-	if err != nil {
-		panic(err)
-	}
-	defer s.Close()
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		for {
-			select {
-			case <-ctx.Done():
-				return
-			case msg := <-ch:
-				s.redis.XAdd(ctx, msg)
-			}
-		}
-	}()
-	for _, s := range s.Streams {
-		wg.Add(1)
-		go func(s *Stream) {
-			defer wg.Done()
-			e := s.Stream(ctx, ch)
-			if e != nil {
-				log.Fatal(e)
-			}
-		}(s)
-	}
-	wg.Wait()
+
 }
 
 func (s *Node) Consume(ctx context.Context) bool {
