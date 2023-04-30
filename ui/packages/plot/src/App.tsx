@@ -1,13 +1,21 @@
-import { render } from "solid-js/web";
+import { createSignal, onMount } from 'solid-js';
+import { render } from 'solid-js/web';
+import Plotly from 'plotly.js/dist/plotly';
+import * as d3 from '@plotly/d3';
 
-import "./index.scss";
+function PlotlyComponent() {
+    let divRef: HTMLDivElement;
 
-const App = () => (
-  <div class="mt-10 text-3xl mx-auto max-w-6xl">
-    <div>Name: plot</div>
-    <div>Framework: solid-js</div>
-    <div>Language: TypeScript</div>
-    <div>CSS: Tailwind</div>
-  </div>
-);
-render(App, document.getElementById("app"));
+    onMount(() => {
+        Plotly.newPlot(divRef, [{
+            x: [1, 2, 3, 4, 5],
+            y: [1, 2, 4, 8, 16]
+        }]);
+    });
+
+    return (
+        <div ref={divRef} />
+    );
+}
+
+render(() => <PlotlyComponent />, document.getElementById('app'));
