@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs'
 import { ApolloServer } from 'apollo-server'
 import { Resolvers } from '../resolvers-types'
 
-const typeDefs = readFileSync('./supergraph.graphql', 'utf8')
+const typeDefs = readFileSync('./schema.graphql', 'utf8')
 
 const resolvers: Resolvers = {
     Query: {

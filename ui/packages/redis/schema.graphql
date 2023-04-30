@@ -1,8 +1,4 @@
-extend schema
-@link(url: "https://specs.apollo.dev/federation/v2.0",
-    import: ["@key"])
-
-type Stream @key(fields: "name"){
+type Stream{
     name: String
     items: [StreamItem!]
 }
@@ -14,7 +10,10 @@ type Query {
     stream(name: String!): Stream
 }
 
-type StreamItem @key(fields: "id"){
+type KeyedValue {
+    key: FieldSet,
+}
+type StreamItem {
     stream: Stream
-    id: ID!
+
 }

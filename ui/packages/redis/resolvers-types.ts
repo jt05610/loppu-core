@@ -1,4 +1,4 @@
-import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
+import { GraphQLResolveInfo } from 'graphql';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -12,8 +12,6 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  join__FieldSet: any;
-  link__Import: any;
 };
 
 export type Query = {
@@ -40,17 +38,6 @@ export type StreamItem = {
   id: Scalars['ID'];
   stream?: Maybe<Stream>;
 };
-
-export enum Join__Graph {
-  Streams = 'STREAMS'
-}
-
-export enum Link__Purpose {
-  /** `EXECUTION` features provide metadata necessary for operation execution. */
-  Execution = 'EXECUTION',
-  /** `SECURITY` features provide metadata necessary to securely resolve fields. */
-  Security = 'SECURITY'
-}
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
 export type ResolversObject<TObject> = WithIndex<TObject>;
@@ -130,10 +117,6 @@ export type ResolversTypes = ResolversObject<{
   Stream: ResolverTypeWrapper<Stream>;
   StreamItem: ResolverTypeWrapper<StreamItem>;
   String: ResolverTypeWrapper<Scalars['String']>;
-  join__FieldSet: ResolverTypeWrapper<Scalars['join__FieldSet']>;
-  join__Graph: Join__Graph;
-  link__Import: ResolverTypeWrapper<Scalars['link__Import']>;
-  link__Purpose: Link__Purpose;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -144,67 +127,7 @@ export type ResolversParentTypes = ResolversObject<{
   Stream: Stream;
   StreamItem: StreamItem;
   String: Scalars['String'];
-  join__FieldSet: Scalars['join__FieldSet'];
-  link__Import: Scalars['link__Import'];
 }>;
-
-export type Join__EnumValueDirectiveArgs = {
-  graph: Join__Graph;
-};
-
-export type Join__EnumValueDirectiveResolver<Result, Parent, ContextType = any, Args = Join__EnumValueDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
-
-export type Join__FieldDirectiveArgs = {
-  external?: Maybe<Scalars['Boolean']>;
-  graph?: Maybe<Join__Graph>;
-  override?: Maybe<Scalars['String']>;
-  provides?: Maybe<Scalars['join__FieldSet']>;
-  requires?: Maybe<Scalars['join__FieldSet']>;
-  type?: Maybe<Scalars['String']>;
-  usedOverridden?: Maybe<Scalars['Boolean']>;
-};
-
-export type Join__FieldDirectiveResolver<Result, Parent, ContextType = any, Args = Join__FieldDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
-
-export type Join__GraphDirectiveArgs = {
-  name: Scalars['String'];
-  url: Scalars['String'];
-};
-
-export type Join__GraphDirectiveResolver<Result, Parent, ContextType = any, Args = Join__GraphDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
-
-export type Join__ImplementsDirectiveArgs = {
-  graph: Join__Graph;
-  interface: Scalars['String'];
-};
-
-export type Join__ImplementsDirectiveResolver<Result, Parent, ContextType = any, Args = Join__ImplementsDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
-
-export type Join__TypeDirectiveArgs = {
-  extension?: Scalars['Boolean'];
-  graph: Join__Graph;
-  isInterfaceObject?: Scalars['Boolean'];
-  key?: Maybe<Scalars['join__FieldSet']>;
-  resolvable?: Scalars['Boolean'];
-};
-
-export type Join__TypeDirectiveResolver<Result, Parent, ContextType = any, Args = Join__TypeDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
-
-export type Join__UnionMemberDirectiveArgs = {
-  graph: Join__Graph;
-  member: Scalars['String'];
-};
-
-export type Join__UnionMemberDirectiveResolver<Result, Parent, ContextType = any, Args = Join__UnionMemberDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
-
-export type LinkDirectiveArgs = {
-  as?: Maybe<Scalars['String']>;
-  for?: Maybe<Link__Purpose>;
-  import?: Maybe<Array<Maybe<Scalars['link__Import']>>>;
-  url?: Maybe<Scalars['String']>;
-};
-
-export type LinkDirectiveResolver<Result, Parent, ContextType = any, Args = LinkDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   stream?: Resolver<Maybe<ResolversTypes['Stream']>, ParentType, ContextType, RequireFields<QueryStreamArgs, 'name'>>;
@@ -223,28 +146,9 @@ export type StreamItemResolvers<ContextType = any, ParentType extends ResolversP
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export interface Join__FieldSetScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['join__FieldSet'], any> {
-  name: 'join__FieldSet';
-}
-
-export interface Link__ImportScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['link__Import'], any> {
-  name: 'link__Import';
-}
-
 export type Resolvers<ContextType = any> = ResolversObject<{
   Query?: QueryResolvers<ContextType>;
   Stream?: StreamResolvers<ContextType>;
   StreamItem?: StreamItemResolvers<ContextType>;
-  join__FieldSet?: GraphQLScalarType;
-  link__Import?: GraphQLScalarType;
 }>;
 
-export type DirectiveResolvers<ContextType = any> = ResolversObject<{
-  join__enumValue?: Join__EnumValueDirectiveResolver<any, any, ContextType>;
-  join__field?: Join__FieldDirectiveResolver<any, any, ContextType>;
-  join__graph?: Join__GraphDirectiveResolver<any, any, ContextType>;
-  join__implements?: Join__ImplementsDirectiveResolver<any, any, ContextType>;
-  join__type?: Join__TypeDirectiveResolver<any, any, ContextType>;
-  join__unionMember?: Join__UnionMemberDirectiveResolver<any, any, ContextType>;
-  link?: LinkDirectiveResolver<any, any, ContextType>;
-}>;
