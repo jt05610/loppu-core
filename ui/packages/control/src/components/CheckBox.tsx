@@ -1,11 +1,25 @@
-import {Component} from "solid-js";
+import {Component, createSignal} from "solid-js";
 
-type CheckBoxProps = {}
+const [toggled, toggle] = createSignal(false);
 
-export const CheckBox: Component < CheckBoxProps > = (props) => {
+type CheckBoxProps = {
+    text: string
+}
+
+export const CheckBox: Component<CheckBoxProps> = (props) => {
     return (
-        <div>
-
+        <div className="form-check">
+            <input
+                onClick={() => toggle(!toggled())}
+                className="form-check-input"
+                type="checkbox"
+                value=""
+                id="flexCheckChecked"
+                checked={toggled()}
+            />
+            <label className="form-check-label" htmlFor="flexCheckChecked">
+                {props.text}
+            </label>
         </div>
     )
 }

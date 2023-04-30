@@ -14,7 +14,7 @@ type WaitProps = {
 
 export const Wait: Component<WaitProps> = (props) => {
     return (
-        <div class={"spinner-" + props.type + " text-" + props.color} role="status">
+        <div class={"spinner-" + props.type + " text-" + props.color + " spinner-" + props.type + "-sm"} role="status">
             <span class="visually-hidden">{props.text}</span>
         </div>
     )
