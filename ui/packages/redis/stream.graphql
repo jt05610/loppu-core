@@ -1,0 +1,20 @@
+extend schema
+@link(url: "https://specs.apollo.dev/federation/v2.0",
+    import: ["@key"])
+
+type Stream @key(fields: "name"){
+    name: String
+    items: [StreamItem!]
+}
+
+type Query {
+    "All streams available"
+    streams: [Stream!]!
+    "The details of a specific stream"
+    stream(name: String!): Stream
+}
+
+type StreamItem @key(fields: "id"){
+    stream: Stream
+    id: ID!
+}

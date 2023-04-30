@@ -1,0 +1,6 @@
+federation_version: 2
+subgraphs:
+  streams:
+    routing_url: http://127.0.0.1:8083/
+    schema:
+      file: ./stream.graphql
