@@ -16,5 +16,7 @@ type KeyedValue {
 }
 
 type StreamItem {
-    stream: Stream
+    time: Int
+    force: Float
+    pos: Int
 }

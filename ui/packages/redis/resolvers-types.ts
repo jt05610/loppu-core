@@ -41,7 +41,9 @@ export type Stream = {
 
 export type StreamItem = {
   __typename?: 'StreamItem';
-  stream?: Maybe<Stream>;
+  force?: Maybe<Scalars['Float']>;
+  pos?: Maybe<Scalars['Int']>;
+  time?: Maybe<Scalars['Int']>;
 };
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -118,6 +120,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = ResolversObject<{
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
   KeyedValue: ResolverTypeWrapper<KeyedValue>;
   Query: ResolverTypeWrapper<{}>;
   Stream: ResolverTypeWrapper<Stream>;
@@ -129,6 +132,7 @@ export type ResolversTypes = ResolversObject<{
 export type ResolversParentTypes = ResolversObject<{
   Boolean: Scalars['Boolean'];
   Float: Scalars['Float'];
+  Int: Scalars['Int'];
   KeyedValue: KeyedValue;
   Query: {};
   Stream: Stream;
@@ -154,7 +158,9 @@ export type StreamResolvers<ContextType = any, ParentType extends ResolversParen
 }>;
 
 export type StreamItemResolvers<ContextType = any, ParentType extends ResolversParentTypes['StreamItem'] = ResolversParentTypes['StreamItem']> = ResolversObject<{
-  stream?: Resolver<Maybe<ResolversTypes['Stream']>, ParentType, ContextType>;
+  force?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  pos?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  time?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
