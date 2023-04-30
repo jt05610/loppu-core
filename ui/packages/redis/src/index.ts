@@ -26,9 +26,9 @@ const streams = [
     }
 ]
 
-const resolvers = {
+const resolvers: Resolvers = {
     Query: {
-        stream(parent, args, contextValue, info) {
+        stream(parent, args) {
             return streams.find((stream) => stream.name === args.name)
         },
         streams() {
@@ -36,6 +36,7 @@ const resolvers = {
         },
     }
 };
+
 const server = new ApolloServer({typeDefs, resolvers})
 
 // The `listen` method launches a web server
