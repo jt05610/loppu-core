@@ -11,9 +11,10 @@ type Query {
 }
 
 type KeyedValue {
-    key: FieldSet,
+    key: String,
+    value: Float
 }
+
 type StreamItem {
     stream: Stream
-
 }

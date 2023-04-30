@@ -14,6 +14,12 @@ export type Scalars = {
   Float: number;
 };
 
+export type KeyedValue = {
+  __typename?: 'KeyedValue';
+  key?: Maybe<Scalars['String']>;
+  value?: Maybe<Scalars['Float']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   /** The details of a specific stream */
@@ -35,7 +41,6 @@ export type Stream = {
 
 export type StreamItem = {
   __typename?: 'StreamItem';
-  id: Scalars['ID'];
   stream?: Maybe<Stream>;
 };
 
@@ -112,7 +117,8 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
-  ID: ResolverTypeWrapper<Scalars['ID']>;
+  Float: ResolverTypeWrapper<Scalars['Float']>;
+  KeyedValue: ResolverTypeWrapper<KeyedValue>;
   Query: ResolverTypeWrapper<{}>;
   Stream: ResolverTypeWrapper<Stream>;
   StreamItem: ResolverTypeWrapper<StreamItem>;
@@ -122,11 +128,18 @@ export type ResolversTypes = ResolversObject<{
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
   Boolean: Scalars['Boolean'];
-  ID: Scalars['ID'];
+  Float: Scalars['Float'];
+  KeyedValue: KeyedValue;
   Query: {};
   Stream: Stream;
   StreamItem: StreamItem;
   String: Scalars['String'];
+}>;
+
+export type KeyedValueResolvers<ContextType = any, ParentType extends ResolversParentTypes['KeyedValue'] = ResolversParentTypes['KeyedValue']> = ResolversObject<{
+  key?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  value?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
@@ -141,12 +154,12 @@ export type StreamResolvers<ContextType = any, ParentType extends ResolversParen
 }>;
 
 export type StreamItemResolvers<ContextType = any, ParentType extends ResolversParentTypes['StreamItem'] = ResolversParentTypes['StreamItem']> = ResolversObject<{
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   stream?: Resolver<Maybe<ResolversTypes['Stream']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type Resolvers<ContextType = any> = ResolversObject<{
+  KeyedValue?: KeyedValueResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Stream?: StreamResolvers<ContextType>;
   StreamItem?: StreamItemResolvers<ContextType>;
