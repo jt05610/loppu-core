@@ -1,20 +1,9 @@
 import {Component} from "solid-js";
-
-export enum ButtonKind {
-    Primary = "primary",
-    Secondary = "secondary",
-    Success = "success",
-    Danger = "danger",
-    Warning = "warning",
-    Info = "info",
-    Light = "light",
-    Dark = "dark",
-    Link = "link"
-}
+import {Color} from "./Color";
 
 type ButtonProps = {
     text: string
-    kind: ButtonKind;
+    kind: Color;
 
 };
 
