@@ -1,11 +1,15 @@
 import {Component} from "solid-js";
 
-type ComboBoxProps = {}
+
+type ComboBoxProps = {
+    Items: Component[],
+}
+
 
 export const ComboBox: Component<ComboBoxProps> = (props) => {
     return (
-        <div>
+        <nav class="nav">
 
-        </div>
+        </nav>
     )
 }

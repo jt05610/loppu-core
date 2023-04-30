@@ -1,12 +1,12 @@
 import {Component, createSignal} from "solid-js";
 
-const [toggled, toggle] = createSignal(false);
 
 type CheckBoxProps = {
     text: string
 }
 
 export const CheckBox: Component<CheckBoxProps> = (props) => {
+    const [toggled, toggle] = createSignal(false);
     return (
         <div className="form-check">
             <input

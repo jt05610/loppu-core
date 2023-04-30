@@ -7,11 +7,14 @@ import {ProcessButton} from "./components/ProcessButton";
 import {CheckBox} from "./components/CheckBox";
 
 const App = () => (
-    <div class="row">
-        <div class ="col">
+    <div className="grid gap-3">
+        <div className="p-2 g-col-6">
+            <Button content="Button" secondaryContent="Clicked button" kind={Color.Danger}/>
+        </div>
+        <div class="p-2 g-col-6">
             <ProcessButton text="Process button" color={Color.Teal}/>
         </div>
-        <div class="col">
+        <div className="p-2 g-col-6">
             <CheckBox text="Check box"/>
         </div>
     </div>
