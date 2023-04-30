@@ -1,13 +1,12 @@
-import { render } from "solid-js/web";
+import {render} from "solid-js/web";
 
 import "./index.scss";
+import {Button, ButtonKind} from "./components/Button";
 
 const App = () => (
-  <div class="mt-10 text-3xl mx-auto max-w-6xl">
-    <div>Name: control</div>
-    <div>Framework: solid-js</div>
-    <div>Language: TypeScript</div>
-    <div>CSS: Tailwind</div>
+  <div class="row">
+    <Button text="testButton" kind={ButtonKind.Secondary}/>
   </div>
 );
+
 render(App, document.getElementById("app"));
