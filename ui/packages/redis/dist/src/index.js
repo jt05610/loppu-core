@@ -3,7 +3,7 @@ import { ApolloServer } from 'apollo-server';
 const typeDefs = readFileSync('./schema.graphql', 'utf8');
 const streams = [
     {
-        "name": "injector:cow0",
+        "name": "stream0",
         items: [
             { "time": 0, "force": 1, "pos": 700 },
             { "time": 1, "force": 2, "pos": 700 },
@@ -13,7 +13,7 @@ const streams = [
         ]
     },
     {
-        "name": "injector:cow1",
+        "name": "stream1",
         items: [
             { "time": 0, "force": 1, "pos": 700 },
             { "time": 1, "force": 4, "pos": 700 },
@@ -25,7 +25,7 @@ const streams = [
 ];
 const resolvers = {
     Query: {
-        stream(parent, args, contextValue, info) {
+        stream(parent, args) {
             return streams.find((stream) => stream.name === args.name);
         },
         streams() {
