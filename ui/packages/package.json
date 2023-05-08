@@ -1,0 +1,22 @@
+{
+  "name": "loppu",
+  "version": "0.0.1",
+  "description": "",
+  "workspaces": [
+    "app-frame",
+    "core"
+  ],
+  "scripts": {
+    "build": "pnpm  --parallel --filter \"./**\" build",
+    "serve": "pnpm  --parallel --filter \"./**\" preview",
+    "build:remotes": "pnpm --parallel --filter \"./remote\" build",
+    "serve:remotes": "pnpm --parallel --filter \"./remote\" serve",
+    "dev:hosts": "pnpm --filter \"./host\" dev",
+    "stop": "kill-port --port 5000,5001"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@originjs/vite-plugin-federation": "^1.2.2",
+    "kill-port": "^2.0.1"
+  }
+}
